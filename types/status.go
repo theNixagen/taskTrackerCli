@@ -20,3 +20,14 @@ func (s Status) String() string {
 		return "Unknown"
 	}
 }
+
+func (s *Status) Decode(strStatus string) {
+	switch strStatus {
+	case "Pending":
+		*s = Todo
+	case "In progress":
+		*s = InProgress
+	case "Done":
+		*s = Done
+	}
+}

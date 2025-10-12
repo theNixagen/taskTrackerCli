@@ -1,77 +1,19 @@
 package main
 
 import (
-	"encoding/csv"
-	"errors"
 	"fmt"
-	"log"
 	"os"
 	"strconv"
-	"time"
 
+	"github.com/joaoguilherme2909/taskTrackerCli/internal/io"
+	"github.com/joaoguilherme2909/taskTrackerCli/internal/io/csv"
+	usecases "github.com/joaoguilherme2909/taskTrackerCli/internal/useCases"
 	"github.com/joaoguilherme2909/taskTrackerCli/types"
 )
 
-type Task struct {
-	id          int
-	description string
-	status      types.Status
-	createdAt   time.Time
-	updatedAt   time.Time
-}
-
-func CheckIfFileExists(path string) {
-	if _, err := os.Stat(path); errors.Is(err, os.ErrNotExist) {
-		os.Create(path)
-	}
-}
-
-func writeFile(fileName string, fileContent Task) {
-	file, err := os.OpenFile(fileName, os.O_APPEND|os.O_WRONLY, 0644)
-	if err != nil {
-		panic(err)
-	}
-	defer file.Close()
-
-	writer := csv.NewWriter(file)
-	defer writer.Flush()
-
-	if err = writer.Write([]string{
-		strconv.Itoa(fileContent.id),
-		fileContent.description,
-		fmt.Sprintf("%s", fileContent.status),
-		fileContent.createdAt.Format("02/01/2006"),
-		fileContent.updatedAt.Format("02/01/2006"),
-	},
-	); err != nil {
-		fmt.Println("Error writing to file")
-		os.Exit(1)
-	}
-}
-
-func readFile(fileName, filter string) {
-	file, err := os.Open(fileName)
-	if err != nil {
-		panic(err)
-	}
-	defer file.Close()
-	reader := csv.NewReader(file)
-
-	for {
-		record, err := reader.Read()
-		if err != nil {
-			if err.Error() == "EOF" {
-				break
-			}
-			log.Fatal(err)
-		}
-		fmt.Println(record)
-	}
-}
-
 func main() {
 	fileName := "tasks.csv"
-	CheckIfFileExists(fileName)
+	io.CreateIfNotExists(fileName)
 
 	if len(os.Args) < 2 {
 		fmt.Println("Invalid cmd")
@@ -86,16 +28,47 @@ func main() {
 			fmt.Println("Invalid task")
 			os.Exit(1)
 		}
-		writeFile(fileName, Task{
-			id:          1,
-			description: os.Args[2],
-			status:      types.Todo,
-			createdAt:   time.Now(),
-			updatedAt:   time.Now(),
-		})
+		usecases.AddTask(fileName, os.Args[2])
 	case "list":
 		if len(os.Args) == 2 {
-			readFile(fileName, "")
+			csv.ReadFile(fileName, func(record []string) {
+				task := types.Task{}
+				task.Decode(record)
+				fmt.Printf("%+v\n", task)
+			})
+		}
+	case "delete":
+		if len(os.Args) == 3 {
+			id, err := strconv.Atoi(os.Args[2])
+
+			if err != nil {
+				fmt.Println("Invalid value")
+				os.Exit(1)
+			}
+
+			usecases.DeleteTask(int(id), fileName)
+		}
+	case "update":
+		if len(os.Args) == 4 {
+			id, err := strconv.Atoi(os.Args[2])
+
+			if err != nil {
+				fmt.Println("Invalid value")
+				os.Exit(1)
+			}
+
+			usecases.UpdateTask(id, os.Args[3], fileName)
+		}
+	case "mark-in-progress":
+		if len(os.Args) == 3 {
+			id, err := strconv.Atoi(os.Args[2])
+
+			if err != nil {
+				fmt.Println("Invalid value")
+				os.Exit(1)
+			}
+
+			usecases.UpdateStatus(id, types.Status, fileName)
 		}
 	}
 }
