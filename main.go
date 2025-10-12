@@ -39,8 +39,7 @@ func main() {
 			csv.ReadFile(fileName, func(record []string) {
 				task := types.Task{}
 				task.Decode(record)
-				fmt.Println(task)
-				// t.AppendRow(table.Row{task.Id, task.Description, task.Status, task.CreatedAt, task.UpdatedAt})
+				t.AppendRow(table.Row{task.Id, task.Description, task.Status, task.CreatedAt, task.UpdatedAt})
 			})
 		} else if len(os.Args) == 3 {
 			csv.ReadFile(fileName, func(record []string) {
