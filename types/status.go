@@ -11,7 +11,7 @@ const (
 func (s Status) String() string {
 	switch s {
 	case Todo:
-		return "Pending"
+		return "Todo"
 	case InProgress:
 		return "In progress"
 	case Done:
@@ -23,7 +23,7 @@ func (s Status) String() string {
 
 func (s *Status) Decode(strStatus string) {
 	switch strStatus {
-	case "Pending":
+	case "Todo":
 		*s = Todo
 	case "In progress":
 		*s = InProgress

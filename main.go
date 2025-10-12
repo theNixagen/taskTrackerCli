@@ -5,6 +5,7 @@ import (
 	"os"
 	"strconv"
 
+	"github.com/jedib0t/go-pretty/v6/table"
 	"github.com/joaoguilherme2909/taskTrackerCli/internal/io"
 	"github.com/joaoguilherme2909/taskTrackerCli/internal/io/csv"
 	usecases "github.com/joaoguilherme2909/taskTrackerCli/internal/useCases"
@@ -22,6 +23,10 @@ func main() {
 
 	cmd := os.Args[1]
 
+	t := table.NewWriter()
+	t.SetOutputMirror(os.Stdout)
+	t.AppendHeader(table.Row{"ID", "Description", "Status", "Create At", "Updated At"})
+
 	switch cmd {
 	case "add":
 		if len(os.Args) == 2 {
@@ -34,9 +39,24 @@ func main() {
 			csv.ReadFile(fileName, func(record []string) {
 				task := types.Task{}
 				task.Decode(record)
-				fmt.Printf("%+v\n", task)
+				fmt.Println(task)
+				// t.AppendRow(table.Row{task.Id, task.Description, task.Status, task.CreatedAt, task.UpdatedAt})
+			})
+		} else if len(os.Args) == 3 {
+			csv.ReadFile(fileName, func(record []string) {
+				task := types.Task{}
+				task.Decode(record)
+				if os.Args[2] == "done" && task.Status == types.Done {
+					t.AppendRow(table.Row{task.Id, task.Description, task.Status, task.CreatedAt, task.UpdatedAt})
+				} else if os.Args[2] == "in-progress" && task.Status == types.InProgress {
+					t.AppendRow(table.Row{task.Id, task.Description, task.Status, task.CreatedAt, task.UpdatedAt})
+				} else if os.Args[2] == "todo" && task.Status == types.Todo {
+					t.AppendRow(table.Row{task.Id, task.Description, task.Status, task.CreatedAt, task.UpdatedAt})
+				}
 			})
 		}
+
+		t.Render()
 	case "delete":
 		if len(os.Args) == 3 {
 			id, err := strconv.Atoi(os.Args[2])
@@ -68,7 +88,18 @@ func main() {
 				os.Exit(1)
 			}
 
-			usecases.UpdateStatus(id, types.Status, fileName)
+			usecases.UpdateStatus(id, types.InProgress, fileName)
+		}
+	case "mark-done":
+		if len(os.Args) == 3 {
+			id, err := strconv.Atoi(os.Args[2])
+
+			if err != nil {
+				fmt.Println("Invalid value")
+				os.Exit(1)
+			}
+
+			usecases.UpdateStatus(id, types.Done, fileName)
 		}
 	}
 }
