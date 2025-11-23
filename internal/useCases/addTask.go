@@ -4,9 +4,9 @@ import (
 	"log"
 	"time"
 
-	"github.com/joaoguilherme2909/taskTrackerCli/internal/io/csv"
-	"github.com/joaoguilherme2909/taskTrackerCli/internal/io/json"
-	"github.com/joaoguilherme2909/taskTrackerCli/types"
+	"github.com/theNixagen/taskTrackerCli/internal/io/csv"
+	"github.com/theNixagen/taskTrackerCli/internal/io/json"
+	"github.com/theNixagen/taskTrackerCli/types"
 )
 
 func AddTask(fileName string, description string) {

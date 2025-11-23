@@ -5,8 +5,8 @@ import (
 	"fmt"
 	"os"
 
-	"github.com/joaoguilherme2909/taskTrackerCli/internal/io"
-	"github.com/joaoguilherme2909/taskTrackerCli/types"
+	"github.com/theNixagen/taskTrackerCli/internal/io"
+	"github.com/theNixagen/taskTrackerCli/types"
 )
 
 func CreateFile(fileName string) {

@@ -6,10 +6,11 @@ import (
 	"strconv"
 
 	"github.com/jedib0t/go-pretty/v6/table"
-	"github.com/joaoguilherme2909/taskTrackerCli/internal/io"
-	"github.com/joaoguilherme2909/taskTrackerCli/internal/io/csv"
-	usecases "github.com/joaoguilherme2909/taskTrackerCli/internal/useCases"
-	"github.com/joaoguilherme2909/taskTrackerCli/types"
+
+	"github.com/theNixagen/taskTrackerCli/internal/io"
+	"github.com/theNixagen/taskTrackerCli/internal/io/csv"
+	usecases "github.com/theNixagen/taskTrackerCli/internal/useCases"
+	"github.com/theNixagen/taskTrackerCli/types"
 )
 
 func main() {

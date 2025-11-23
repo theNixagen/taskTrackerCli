@@ -2,7 +2,7 @@ package main
 
 import (
 	"github.com/go-faker/faker/v4"
-	usecases "github.com/joaoguilherme2909/taskTrackerCli/internal/useCases"
+	usecases "github.com/theNixagen/taskTrackerCli/internal/useCases"
 )
 
 func main() {
